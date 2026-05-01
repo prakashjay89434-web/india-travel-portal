@@ -122,7 +122,11 @@ const place = placesData[placeName];
 if(place) {
   document.getElementById('placeName').textContent = place.name;
   document.getElementById('placeInfo').textContent = place.info;
+  
+  // ← YAHAN ADD KARO YEH DONO LINES!
+  document.getElementById('aboutTitle').textContent = place.name;
   document.getElementById('placeAbout').textContent = place.about;
+  
   document.getElementById('placePrice').innerHTML = 
     place.price + ' <span>/ person</span>';
 
