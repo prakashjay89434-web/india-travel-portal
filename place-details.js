@@ -122,11 +122,10 @@ const place = placesData[placeName];
 if(place) {
   document.getElementById('placeName').textContent = place.name;
   document.getElementById('placeInfo').textContent = place.info;
-  
-  // ← YAHAN ADD KARO YEH DONO LINES!
-  document.getElementById('aboutTitle').textContent = place.name;
-  document.getElementById('placeAbout').textContent = place.about;
-  
+  document.getElementById('placeAbout').textContent = place.about; // ✅ ADD THIS
+  // ... baaki same
+}
+ 
   document.getElementById('placePrice').innerHTML = 
     place.price + ' <span>/ person</span>';
 
@@ -141,7 +140,7 @@ if(place) {
     li.textContent = item;
     highlightsList.appendChild(li);
   });
-}
+
 
 // BOOKING LOGIC — API SE CONNECT!
 document.querySelector('.book-btn').addEventListener('click', async function() {
