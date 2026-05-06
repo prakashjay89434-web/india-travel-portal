@@ -160,7 +160,7 @@ document.querySelector('.book-btn').addEventListener('click', async function() {
 
   try {
     // Backend API call!
-    const response = await fetch('http://localhost:5000/api/bookings/create', {
+    const response = await fetch('https://india-travel-portal.onrender.com/api/bookings/create', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
