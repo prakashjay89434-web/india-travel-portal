@@ -14,9 +14,7 @@ document.querySelector('.logout-btn')
 // Backend API se bookings fetch karo!
 async function loadAdminData() {
   try {
-    const response = await fetch(
-      'http://localhost:5000/api/bookings/stats'
-    );
+    const response = await fetch('https://india-travel-portal.onrender.com/api/bookings/stats');
     const data = await response.json();
 
     // Stats update karo
