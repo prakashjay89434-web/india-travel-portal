@@ -1,3 +1,5 @@
+const BASE_URL = 'https://india-travel-portal.onrender.com';
+
 // TABS LOGIC
 const loginTab = document.getElementById('loginTab');
 const signupTab = document.getElementById('signupTab');
@@ -18,12 +20,8 @@ signupTab.addEventListener('click', function() {
   loginForm.classList.add('hidden');
 });
 
-// Admin Credentials
-const ADMIN_EMAIL = "admin@indiatravel.com";
-const ADMIN_PASSWORD = "admin@123";
-
-// LOGIN LOGIC
-document.getElementById('loginBtn').addEventListener('click', function() {
+// LOGIN
+document.getElementById('loginBtn').addEventListener('click', async function() {
   const email = document.getElementById('loginEmail').value;
   const password = document.getElementById('loginPassword').value;
   const msg = document.getElementById('loginMsg');
@@ -34,37 +32,45 @@ document.getElementById('loginBtn').addEventListener('click', function() {
     return;
   }
 
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  if(!emailRegex.test(email)) {
-    msg.style.color = '#e94560';
-    msg.textContent = '❌ Please enter valid email!';
-    return;
-  }
+  msg.style.color = '#888';
+  msg.textContent = '⏳ Logging in...';
 
-  if(password.length < 6) {
-    msg.style.color = '#e94560';
-    msg.textContent = '❌ Password must be 6+ characters!';
-    return;
-  }
+  try {
+    const response = await fetch(`${BASE_URL}/api/auth/login`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, password })
+    });
 
-  if(email === ADMIN_EMAIL && password === ADMIN_PASSWORD) {
-    msg.style.color = '#00c853';
-    msg.textContent = '✅ Welcome Admin! Redirecting...';
-    sessionStorage.setItem('isAdmin', 'true');
-    setTimeout(function() {
-      window.location.href = 'admin.html';
-    }, 1500);
-  } else {
-    msg.style.color = '#00c853';
-    msg.textContent = '✅ Login Successful! Redirecting...';
-    setTimeout(function() {
-      window.location.href = 'index.html';
-    }, 1500);
+    const data = await response.json();
+
+    if(response.ok) {
+      msg.style.color = '#00c853';
+      msg.textContent = '✅ ' + data.message;
+
+      // Token save karo
+      sessionStorage.setItem('token', data.token);
+      sessionStorage.setItem('userEmail', email);
+
+      if(data.role === 'admin') {
+        sessionStorage.setItem('isAdmin', 'true');
+        setTimeout(() => window.location.href = 'admin.html', 1500);
+      } else {
+        setTimeout(() => window.location.href = 'index.html', 1500);
+      }
+    } else {
+      msg.style.color = '#e94560';
+      msg.textContent = '❌ ' + data.message;
+    }
+
+  } catch(error) {
+    msg.style.color = '#e94560';
+    msg.textContent = '❌ Server error! Try again.';
   }
 });
 
-// SIGNUP LOGIC
-document.getElementById('signupBtn').addEventListener('click', function() {
+// SIGNUP
+document.getElementById('signupBtn').addEventListener('click', async function() {
   const name = document.getElementById('signupName').value;
   const email = document.getElementById('signupEmail').value;
   const password = document.getElementById('signupPassword').value;
@@ -89,9 +95,29 @@ document.getElementById('signupBtn').addEventListener('click', function() {
     return;
   }
 
-  msg.style.color = '#00c853';
-  msg.textContent = '✅ Account Created! Please Login.';
-  setTimeout(function() {
-    loginTab.click();
-  }, 1500);
+  msg.style.color = '#888';
+  msg.textContent = '⏳ Creating account...';
+
+  try {
+    const response = await fetch(`${BASE_URL}/api/auth/signup`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name, email, password })
+    });
+
+    const data = await response.json();
+
+    if(response.ok) {
+      msg.style.color = '#00c853';
+      msg.textContent = '✅ Account created! Please login.';
+      setTimeout(() => loginTab.click(), 1500);
+    } else {
+      msg.style.color = '#e94560';
+      msg.textContent = '❌ ' + data.message;
+    }
+
+  } catch(error) {
+    msg.style.color = '#e94560';
+    msg.textContent = '❌ Server error! Try again.';
+  }
 });
